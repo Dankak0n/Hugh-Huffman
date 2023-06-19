@@ -71,6 +71,17 @@ void getNewFileName(char nameOut[CHARMAX], char nameIn[CHARMAX], const char * in
 }
 
 node * root = NULL;
+
+void deleteRoot(node ** curNode) {
+    if ((*curNode)->right) {
+        deleteRoot(&(*curNode)->right);
+    }
+    if ((*curNode)->left) {
+        deleteRoot(&(*curNode)->left);
+    }
+    free(*curNode);
+}
+
 void add(data x, unsigned char symb) {
     node * rootPtr = root;
     for (int i = x.size - 1; i >= 0; i--) {
@@ -99,8 +110,7 @@ void add(data x, unsigned char symb) {
     root = rootPtr;
 }
 
-unsigned char strIn[SIZE], strOut[SIZE];
-data codes[CHARMAX];
+unsigned char strOut[SIZE];
 
 node * curNodePtr;
 void go(int bit, size_t * sizeOut) {
@@ -120,12 +130,15 @@ void decompress() {
     if (!strcmp(argv[1], "\\last")) {
         strcpy(argv[1], lastStr);
     }
-//    printf("*%s*", argv[1]);
     FILE * compressedFile = fopen(argv[1], "rb");
     if (compressedFile == NULL) {
         printf("[Dankakon:] Error during file opening :(\n");
         return;
     }
+
+    unsigned char * strIn = malloc(SIZE * sizeof(unsigned char));
+    data * codes = malloc(CHARMAX * sizeof(data));
+
     root = (node *)malloc(sizeof(node));
     root->left = NULL;
     root->right = NULL;
@@ -162,7 +175,9 @@ void decompress() {
     FILE * decompressedFile = fopen(nameOut, "wb");
     fwrite(strOut, 1, sizeOut, decompressedFile);
     fclose(decompressedFile);
-    root = NULL;
+    deleteRoot(&root);
+    free(strIn);
+    free(codes);
     printf("+|\n");
 
     printf("[Dankakon:] Successful decompression!\nThe new file is called \"%s\"\n", nameOut);
@@ -358,7 +373,6 @@ void init() {
 int main() {
     init();
     while (TRUE) {
-//        printf("%s", lastStr);
         printf("[You:] ");
         char command[CHARMAX];
         strset(command, '\0');
