@@ -351,7 +351,7 @@ void myExit() {
 }
 
 char * namesCommands[CHARMAX];
-int cntArgs[CHARMAX], cntCommands;
+int cntCommands;
 void (*functions[])() = {help, compress, decompress, play, myExit};
 
 void init() {
@@ -362,12 +362,6 @@ void init() {
     namesCommands[2] = "decompress";
     namesCommands[3] = "play";
     namesCommands[4] = "exit";
-
-    cntArgs[0] = 1;
-    cntArgs[1] = 2;
-    cntArgs[2] = 2;
-    cntArgs[3] = 2;
-    cntArgs[4] = 1;
 }
 
 int main() {
@@ -384,7 +378,7 @@ int main() {
                 printf("[Dankakon:] Incorrect query, please try \"help\"\n");
                 break;
             }
-            if (argc == cntArgs[i] && !strcmp(argv[0], namesCommands[i])) {
+            if (!strcmp(argv[0], namesCommands[i])) {
                 functions[i]();
                 break;
             }
